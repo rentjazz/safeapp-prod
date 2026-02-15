@@ -1,5 +1,6 @@
 const N8N_URL = window.N8N_URL || 'https://n8n.superprojetx.com';
 
+console.log('SafeApp Dashboard v2.0.1');
 console.log('n8n URL:', N8N_URL);
 
 // Helper to extract data from n8n format

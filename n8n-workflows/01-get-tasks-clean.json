@@ -1,0 +1,55 @@
+{
+  "name": "SafeApp - Get Tasks",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "safeapp-tasks",
+        "responseMode": "lastNode"
+      },
+      "id": "webhook-tasks",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "safeapp-tasks"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "task": "MDg2NjcwNDMyNTY4OTM2NzQ4MjQ6MDow",
+        "additionalFields": {}
+      },
+      "id": "google-tasks",
+      "name": "Google Tasks",
+      "type": "n8n-nodes-base.googleTasks",
+      "typeVersion": 1,
+      "position": [450, 300],
+      "credentials": {
+        "googleTasksOAuth2Api": {
+          "id": "meTaS9Qh3u4fBZ1E",
+          "name": "Google Tasks account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Return clean array of tasks\nconst tasks = items.map(item => item.json);\nreturn [{ json: { items: tasks } }];"
+      },
+      "name": "Format Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [650, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{"node": "Google Tasks", "type": "main", "index": 0}]]
+    },
+    "Google Tasks": {
+      "main": [[{"node": "Format Response", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {},
+  "staticData": null
+}

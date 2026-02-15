@@ -5,10 +5,11 @@ WORKDIR /app
 
 # Copy files
 COPY package*.json ./
-COPY . .
+RUN npm install
 
-# Install and build
-RUN npm install && npm run build
+# Copy source and force rebuild
+COPY . .
+RUN rm -rf build && npm run build
 
 # Production stage
 FROM nginx:alpine
