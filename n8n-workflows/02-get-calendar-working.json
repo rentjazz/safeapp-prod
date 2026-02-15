@@ -5,7 +5,7 @@
       "parameters": {
         "httpMethod": "GET",
         "path": "safeapp-calendar",
-        "responseMode": "responseNode"
+        "responseMode": "lastNode"
       },
       "id": "webhook-calendar",
       "name": "Webhook",
@@ -18,8 +18,8 @@
       "parameters": {
         "operation": "getAll",
         "calendar": "primary",
-        "timeMin": "={{ new Date().toISOString() }}",
-        "timeMax": "={{ new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() }}",
+        "timeMin": "={{ $now }}",
+        "timeMax": "={{ $now.plus({ days: 7 }) }}",
         "options": {}
       },
       "id": "google-calendar",
@@ -36,25 +36,13 @@
     },
     {
       "parameters": {
-        "mode": "runOnceForAllItems",
-        "jsCode": "const eventsArray = items.map(item => item.json);\nreturn [{ json: { events: eventsArray } }];"
+        "jsCode": "// Convert all items to a single array\nconst result = items.map(item => item.json);\n// Return as a single item containing the array\nreturn [{ json: result }];"
       },
       "id": "code-aggregate",
       "name": "Aggregate",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [650, 300]
-    },
-    {
-      "parameters": {
-        "respondWith": "json",
-        "responseBody": "={{ JSON.stringify($json.events) }}"
-      },
-      "id": "respond",
-      "name": "Respond to Webhook",
-      "type": "n8n-nodes-base.respondToWebhook",
-      "typeVersion": 1.1,
-      "position": [850, 300]
     }
   ],
   "connections": {
@@ -63,9 +51,6 @@
     },
     "Google Calendar": {
       "main": [[{"node": "Aggregate", "type": "main", "index": 0}]]
-    },
-    "Aggregate": {
-      "main": [[{"node": "Respond to Webhook", "type": "main", "index": 0}]]
     }
   },
   "settings": {},

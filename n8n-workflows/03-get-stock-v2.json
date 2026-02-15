@@ -5,7 +5,7 @@
       "parameters": {
         "httpMethod": "GET",
         "path": "safeapp-stock",
-        "responseMode": "lastNode"
+        "responseMode": "responseNode"
       },
       "id": "webhook-stock",
       "name": "Webhook",
@@ -17,15 +17,27 @@
     {
       "parameters": {
         "operation": "read",
-        "documentId": "1qmSveh_54AGMoLNqLEbhvc53t8ul6ctR1L7jauD0qUo",
-        "sheetName": "Stock",
-        "range": "A:F",
+        "documentId": {
+          "__rl": true,
+          "value": "1qmSveh_54AGMoLNqLEbhvc53t8ul6ctR1L7jauD0qUo",
+          "mode": "list",
+          "cachedResultName": "Stock Safe",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qmSveh_54AGMoLNqLEbhvc53t8ul6ctR1L7jauD0qUo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Feuille 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qmSveh_54AGMoLNqLEbhvc53t8ul6ctR1L7jauD0qUo/edit#gid=0"
+        },
+        "range": "A:K",
         "options": {}
       },
       "id": "google-sheets",
       "name": "Google Sheets",
       "type": "n8n-nodes-base.googleSheets",
-      "typeVersion": 4,
+      "typeVersion": 4.5,
       "position": [450, 300],
       "credentials": {
         "googleSheetsOAuth2Api": {
@@ -33,11 +45,37 @@
           "name": "Google Sheets account"
         }
       }
+    },
+    {
+      "parameters": {
+        "jsCode": "const allItems = items.map(item => item.json);\nreturn [{ json: allItems }];"
+      },
+      "id": "code-format",
+      "name": "Format Array",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "respond",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [850, 300]
     }
   ],
   "connections": {
     "Webhook": {
       "main": [[{"node": "Google Sheets", "type": "main", "index": 0}]]
+    },
+    "Google Sheets": {
+      "main": [[{"node": "Format Array", "type": "main", "index": 0}]]
+    },
+    "Format Array": {
+      "main": [[{"node": "Respond to Webhook", "type": "main", "index": 0}]]
     }
   },
   "settings": {},

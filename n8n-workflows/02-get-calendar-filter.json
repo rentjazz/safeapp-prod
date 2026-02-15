@@ -18,8 +18,6 @@
       "parameters": {
         "operation": "getAll",
         "calendar": "primary",
-        "timeMin": "={{ new Date().toISOString() }}",
-        "timeMax": "={{ new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() }}",
         "options": {}
       },
       "id": "google-calendar",
@@ -37,10 +35,10 @@
     {
       "parameters": {
         "mode": "runOnceForAllItems",
-        "jsCode": "const eventsArray = items.map(item => item.json);\nreturn [{ json: { events: eventsArray } }];"
+        "jsCode": "const now = new Date();\nconst sevenDaysLater = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);\n\nconst eventsArray = items.map(item => item.json).filter(event => {\n  const eventDate = event.start.dateTime ? new Date(event.start.dateTime) : new Date(event.start.date);\n  return eventDate >= now && eventDate <= sevenDaysLater;\n}).sort((a, b) => {\n  const dateA = a.start.dateTime ? new Date(a.start.dateTime) : new Date(a.start.date);\n  const dateB = b.start.dateTime ? new Date(b.start.dateTime) : new Date(b.start.date);\n  return dateA - dateB;\n});\n\nreturn [{ json: { events: eventsArray } }];"
       },
-      "id": "code-aggregate",
-      "name": "Aggregate",
+      "id": "code-filter",
+      "name": "Filter Events",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [650, 300]
@@ -62,9 +60,9 @@
       "main": [[{"node": "Google Calendar", "type": "main", "index": 0}]]
     },
     "Google Calendar": {
-      "main": [[{"node": "Aggregate", "type": "main", "index": 0}]]
+      "main": [[{"node": "Filter Events", "type": "main", "index": 0}]]
     },
-    "Aggregate": {
+    "Filter Events": {
       "main": [[{"node": "Respond to Webhook", "type": "main", "index": 0}]]
     }
   },

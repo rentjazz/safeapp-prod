@@ -18,8 +18,8 @@
       "parameters": {
         "operation": "getAll",
         "calendar": "primary",
-        "timeMin": "={{ new Date().toISOString() }}",
-        "timeMax": "={{ new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() }}",
+        "timeMin": "={{ $now }}",
+        "timeMax": "={{ $now.plus({ days: 7 }) }}",
         "options": {}
       },
       "id": "google-calendar",
@@ -36,19 +36,17 @@
     },
     {
       "parameters": {
-        "mode": "runOnceForAllItems",
-        "jsCode": "const eventsArray = items.map(item => item.json);\nreturn [{ json: { events: eventsArray } }];"
+        "jsCode": "const allItems = items.map(item => item.json);\nreturn [{ json: allItems }];"
       },
-      "id": "code-aggregate",
-      "name": "Aggregate",
+      "id": "code-format",
+      "name": "Format Array",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [650, 300]
     },
     {
       "parameters": {
-        "respondWith": "json",
-        "responseBody": "={{ JSON.stringify($json.events) }}"
+        "options": {}
       },
       "id": "respond",
       "name": "Respond to Webhook",
@@ -62,9 +60,9 @@
       "main": [[{"node": "Google Calendar", "type": "main", "index": 0}]]
     },
     "Google Calendar": {
-      "main": [[{"node": "Aggregate", "type": "main", "index": 0}]]
+      "main": [[{"node": "Format Array", "type": "main", "index": 0}]]
     },
-    "Aggregate": {
+    "Format Array": {
       "main": [[{"node": "Respond to Webhook", "type": "main", "index": 0}]]
     }
   },

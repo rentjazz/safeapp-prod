@@ -19,19 +19,8 @@ function Stock() {
       const data = await ApiService.getStock();
       console.log('Stock data:', data);
       
-      // Convertir en tableau si ce n'est pas déjà le cas
-      let stockItems = [];
-      if (Array.isArray(data)) {
-        stockItems = data;
-      } else if (data && typeof data === 'object') {
-        // Si c'est un objet avec des clés numériques (format n8n)
-        const keys = Object.keys(data).filter(k => !isNaN(parseInt(k)));
-        if (keys.length > 0) {
-          stockItems = keys.map(k => data[k]);
-        } else {
-          stockItems = [data];
-        }
-      }
+      // Les données sont déjà un tableau
+      const stockItems = Array.isArray(data) ? data : [];
       
       // Trier par type puis marque
       stockItems.sort((a, b) => {

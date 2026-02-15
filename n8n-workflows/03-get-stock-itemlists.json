@@ -43,11 +43,31 @@
           "name": "Google Sheets account"
         }
       }
+    },
+    {
+      "parameters": {
+        "operation": "aggregate",
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "="
+            }
+          ]
+        }
+      },
+      "id": "item-lists",
+      "name": "Item Lists",
+      "type": "n8n-nodes-base.itemLists",
+      "typeVersion": 3,
+      "position": [650, 300]
     }
   ],
   "connections": {
     "Webhook": {
       "main": [[{"node": "Google Sheets", "type": "main", "index": 0}]]
+    },
+    "Google Sheets": {
+      "main": [[{"node": "Item Lists", "type": "main", "index": 0}]]
     }
   },
   "settings": {},

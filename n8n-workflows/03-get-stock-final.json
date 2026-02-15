@@ -5,7 +5,7 @@
       "parameters": {
         "httpMethod": "GET",
         "path": "safeapp-stock",
-        "responseMode": "lastNode"
+        "responseMode": "responseNode"
       },
       "id": "webhook-stock",
       "name": "Webhook",
@@ -21,16 +21,15 @@
           "__rl": true,
           "value": "1qmSveh_54AGMoLNqLEbhvc53t8ul6ctR1L7jauD0qUo",
           "mode": "list",
-          "cachedResultName": "Stock Safe",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qmSveh_54AGMoLNqLEbhvc53t8ul6ctR1L7jauD0qUo/edit?usp=drivesdk"
+          "cachedResultName": "Stock Safe"
         },
         "sheetName": {
           "__rl": true,
           "value": "gid=0",
           "mode": "list",
-          "cachedResultName": "Feuille 1",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qmSveh_54AGMoLNqLEbhvc53t8ul6ctR1L7jauD0qUo/edit#gid=0"
+          "cachedResultName": "Feuille 1"
         },
+        "range": "A:K",
         "options": {}
       },
       "id": "google-sheets",
@@ -44,11 +43,39 @@
           "name": "Google Sheets account"
         }
       }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Aggregate all items into a single array\nconst stockArray = items.map(item => item.json);\nreturn [{ json: { stock: stockArray } }];"
+      },
+      "id": "code-aggregate",
+      "name": "Aggregate",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json.stock) }}"
+      },
+      "id": "respond",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [850, 300]
     }
   ],
   "connections": {
     "Webhook": {
       "main": [[{"node": "Google Sheets", "type": "main", "index": 0}]]
+    },
+    "Google Sheets": {
+      "main": [[{"node": "Aggregate", "type": "main", "index": 0}]]
+    },
+    "Aggregate": {
+      "main": [[{"node": "Respond to Webhook", "type": "main", "index": 0}]]
     }
   },
   "settings": {},

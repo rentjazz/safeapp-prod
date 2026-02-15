@@ -5,7 +5,7 @@
       "parameters": {
         "httpMethod": "GET",
         "path": "safeapp-calendar",
-        "responseMode": "responseNode"
+        "responseMode": "lastNode"
       },
       "id": "webhook-calendar",
       "name": "Webhook",
@@ -33,39 +33,11 @@
           "name": "Google Calendar account"
         }
       }
-    },
-    {
-      "parameters": {
-        "mode": "runOnceForAllItems",
-        "jsCode": "// Aggregate all items into a single array\nconst eventsArray = items.map(item => item.json);\nreturn [{ json: { events: eventsArray } }];"
-      },
-      "id": "code-aggregate",
-      "name": "Aggregate",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [650, 300]
-    },
-    {
-      "parameters": {
-        "respondWith": "json",
-        "responseBody": "={{ JSON.stringify($json.events) }}"
-      },
-      "id": "respond",
-      "name": "Respond to Webhook",
-      "type": "n8n-nodes-base.respondToWebhook",
-      "typeVersion": 1.1,
-      "position": [850, 300]
     }
   ],
   "connections": {
     "Webhook": {
       "main": [[{"node": "Google Calendar", "type": "main", "index": 0}]]
-    },
-    "Google Calendar": {
-      "main": [[{"node": "Aggregate", "type": "main", "index": 0}]]
-    },
-    "Aggregate": {
-      "main": [[{"node": "Respond to Webhook", "type": "main", "index": 0}]]
     }
   },
   "settings": {},
