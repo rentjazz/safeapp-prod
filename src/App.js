@@ -9,7 +9,7 @@ import Stock from './components/Stock';
 import Overview from './components/Overview';
 
 // Icons
-import { LayoutDashboard, CheckSquare, Calendar, Package } from 'lucide-react';
+import { LayoutDashboard, CheckSquare, Calendar as CalendarIcon, Package } from 'lucide-react';
 
 function App() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -18,7 +18,7 @@ function App() {
   const tabs = [
     { id: 'overview', label: 'Vue d\'ensemble', icon: LayoutDashboard },
     { id: 'tasks', label: 'Tâches', icon: CheckSquare },
-    { id: 'calendar', label: 'Rendez-vous', icon: Calendar },
+    { id: 'calendar', label: 'Rendez-vous', icon: CalendarIcon },
     { id: 'stock', label: 'Stock', icon: Package },
   ];
 

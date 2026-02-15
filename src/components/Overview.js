@@ -99,7 +99,7 @@ function Overview() {
                 </small>
               </div>
             ))
-          }
+          )}
         </div>
 
         {stock.length > 0 && (
