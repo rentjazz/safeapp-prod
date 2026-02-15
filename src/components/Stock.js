@@ -24,8 +24,20 @@ function Stock() {
       if (Array.isArray(data)) {
         stockItems = data;
       } else if (data && typeof data === 'object') {
-        stockItems = [data];
+        // Si c'est un objet avec des clés numériques (format n8n)
+        const keys = Object.keys(data).filter(k => !isNaN(parseInt(k)));
+        if (keys.length > 0) {
+          stockItems = keys.map(k => data[k]);
+        } else {
+          stockItems = [data];
+        }
       }
+      
+      // Trier par type puis marque
+      stockItems.sort((a, b) => {
+        if (a.Type !== b.Type) return (a.Type || '').localeCompare(b.Type || '');
+        return (a.Marque || '').localeCompare(b.Marque || '');
+      });
       
       setItems(stockItems);
       setError(null);

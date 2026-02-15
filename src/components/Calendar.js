@@ -46,7 +46,7 @@ function Calendar() {
 
   return (
     <div className="calendar-container">
-      <h3>Prochains rendez-vous (3 jours)</h3>
+      <h3>Prochains rendez-vous (7 jours)</h3>
       <div className="event-list">
         {events.length === 0 ? (
           <p className="empty">Aucun rendez-vous</p>

@@ -19,7 +19,7 @@
         "operation": "getAll",
         "calendar": "primary",
         "timeMin": "={{ $now }}",
-        "timeMax": "={{ $now.plus({ days: 3 }) }}",
+        "timeMax": "={{ $now.plus({ days: 7 }) }}",
         "options": {}
       },
       "id": "google-calendar",
@@ -29,7 +29,7 @@
       "position": [450, 300],
       "credentials": {
         "googleCalendarOAuth2Api": {
-          "id": "meTaS9Qh3u4fBZ1E",
+          "id": "MRm9CnX4CmzMtFkt",
           "name": "Google Calendar account"
         }
       }

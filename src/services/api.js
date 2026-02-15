@@ -12,6 +12,13 @@ const extractItems = (data) => {
   if (data.items && Array.isArray(data.items)) {
     return data.items.map(item => item.json || item);
   }
+  // If it's an object with numeric keys (n8n output format), convert to array
+  if (typeof data === 'object' && !Array.isArray(data)) {
+    const keys = Object.keys(data).filter(k => !isNaN(parseInt(k)));
+    if (keys.length > 0) {
+      return keys.map(k => data[k]);
+    }
+  }
   // If it's a single object
   return [data];
 };
