@@ -2,19 +2,27 @@ const N8N_URL = window.N8N_URL || 'https://n8n.superprojetx.com';
 
 console.log('n8n URL:', N8N_URL);
 
+// Helper to extract data from n8n format
+const extractItems = (data) => {
+  if (!data) return [];
+  // If it's already an array, return it
+  if (Array.isArray(data)) return data;
+  // If it has items property with n8n format
+  if (data.items && Array.isArray(data.items)) {
+    return data.items.map(item => item.json || item);
+  }
+  // If it's a single object
+  return [data];
+};
+
 class ApiService {
   // Tasks
   static async getTasks() {
     try {
       const res = await fetch(`${N8N_URL}/webhook/safeapp-tasks`);
-      console.log('Tasks response status:', res.status);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
-      console.log('Tasks data:', data);
-      // Ensure we return { items: [...] }
-      if (data.items) return data;
-      if (Array.isArray(data)) return { items: data };
-      return { items: [data] };
+      return { items: extractItems(data) };
     } catch (err) {
       console.error('Tasks error:', err);
       throw err;
@@ -55,13 +63,9 @@ class ApiService {
   static async getCalendarEvents() {
     try {
       const res = await fetch(`${N8N_URL}/webhook/safeapp-calendar`);
-      console.log('Calendar response status:', res.status);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
-      console.log('Calendar data:', data);
-      if (data.items) return data;
-      if (Array.isArray(data)) return { items: data };
-      return { items: [data] };
+      return { items: extractItems(data) };
     } catch (err) {
       console.error('Calendar error:', err);
       throw err;
@@ -72,11 +76,9 @@ class ApiService {
   static async getStock() {
     try {
       const res = await fetch(`${N8N_URL}/webhook/safeapp-stock`);
-      console.log('Stock response status:', res.status);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
-      console.log('Stock data:', data);
-      return data;
+      return extractItems(data);
     } catch (err) {
       console.error('Stock error:', err);
       throw err;
