@@ -85,6 +85,16 @@ class ApiService {
       throw err;
     }
   }
+
+  static async updateStock(rowId, quantite) {
+    const res = await fetch(`${N8N_URL}/webhook/safeapp-stock-update`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ rowId, quantite })
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res.json();
+  }
 }
 
 export default ApiService;

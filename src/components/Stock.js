@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import ApiService from '../services/api';
-import { Package, AlertTriangle } from 'lucide-react';
+import { Package, AlertTriangle, Plus, Minus, Save, X } from 'lucide-react';
 
 function Stock() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [editingId, setEditingId] = useState(null);
+  const [editValue, setEditValue] = useState('');
 
   useEffect(() => {
     loadStock();
@@ -15,45 +17,62 @@ function Stock() {
     try {
       setLoading(true);
       const data = await ApiService.getStock();
-      // Handle different response formats
-      let items = [];
+      console.log('Stock data:', data);
       
+      // Convertir en tableau si ce n'est pas déjà le cas
+      let stockItems = [];
       if (Array.isArray(data)) {
-        // Array format (rows)
-        const rows = data;
-        items = rows.map((row, index) => ({
-          id: index,
-          reference: row[0] || '',
-          name: row[1] || '',
-          quantity: parseInt(row[2]) || 0,
-          minQuantity: parseInt(row[3]) || 0,
-          location: row[4] || '',
-          supplier: row[5] || ''
-        }));
+        stockItems = data;
       } else if (data && typeof data === 'object') {
-        // Object format (single item or multiple as object)
-        const rows = Array.isArray(data) ? data : [data];
-        items = rows.map((item, index) => ({
-          id: index,
-          reference: item.Type || '',
-          name: `${item.Marque || ''} ${item['Modéle'] || ''}`.trim(),
-          quantity: parseInt(item['Quantité restante']) || 0,
-          minQuantity: parseInt(item['Quantité minimale']) || 0,
-          location: item['Lieu de stockage'] || '',
-          supplier: item.Fournisseur || ''
-        }));
+        stockItems = [data];
       }
       
-      setItems(items);
+      setItems(stockItems);
       setError(null);
     } catch (err) {
+      console.error('Stock error:', err);
       setError(err.message);
     } finally {
       setLoading(false);
     }
   };
 
-  const lowStock = items.filter(item => item.quantity <= item.minQuantity && item.minQuantity > 0);
+  const startEdit = (item) => {
+    setEditingId(item.row_number);
+    setEditValue(item['Quantité restante'] || '');
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setEditValue('');
+  };
+
+  const saveEdit = async (item) => {
+    try {
+      await ApiService.updateStock(item.row_number, parseInt(editValue) || 0);
+      setEditingId(null);
+      loadStock();
+    } catch (err) {
+      alert('Erreur de mise à jour: ' + err.message);
+    }
+  };
+
+  const adjustQuantity = (delta) => {
+    setEditValue((prev) => {
+      const current = parseInt(prev) || 0;
+      return Math.max(0, current + delta);
+    });
+  };
+
+  const lowStock = items.filter(item => 
+    parseInt(item['Quantité restante']) <= parseInt(item['Quantité minimale']) && 
+    parseInt(item['Quantité minimale']) > 0
+  );
+
+  const formatCurrency = (value) => {
+    if (!value || value === '?') return '-';
+    return parseFloat(value).toFixed(2) + ' €';
+  };
 
   if (loading) return <div className="loading">Chargement...</div>;
   if (error) return <div className="error">Erreur: {error}</div>;
@@ -77,30 +96,78 @@ function Stock() {
         </div>
       </div>
 
-      <table className="stock-table">
-        <thead>
-          <tr>
-            <th>Référence</th>
-            <th>Nom</th>
-            <th>Qté</th>
-            <th>Min</th>
-            <th>Emplacement</th>
-          </tr>
-        </thead>
-        <tbody>
-          {items.map(item => (
-            <tr key={item.id} className={item.quantity <= item.minQuantity ? 'low-stock' : ''}>
-              <td>{item.reference}</td>
-              <td>{item.name}</td>
-              <td className={item.quantity <= item.minQuantity ? 'warning' : ''}>
-                {item.quantity}
-              </td>
-              <td>{item.minQuantity}</td>
-              <td>{item.location}</td>
+      <div className="stock-table-wrapper">
+        <table className="stock-table">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Marque</th>
+              <th>Modèle</th>
+              <th>Qté Restante</th>
+              <th>Qté Min</th>
+              <th>Prix HT</th>
+              <th>Valeur HT</th>
+              <th>Fournisseur</th>
+              <th>Emplacement</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {items.map((item, index) => {
+              const isLowStock = 
+                parseInt(item['Quantité restante']) <= parseInt(item['Quantité minimale']) && 
+                parseInt(item['Quantité minimale']) > 0;
+              const isEditing = editingId === item.row_number;
+              
+              return (
+                <tr key={item.row_number || index} className={isLowStock ? 'low-stock' : ''}>
+                  <td>{item.Type}</td>
+                  <td>{item.Marque}</td>
+                  <td>{item['Modéle']}</td>
+                  <td className="quantity-cell">
+                    {isEditing ? (
+                      <div className="quantity-editor">
+                        <button onClick={() => adjustQuantity(-1)} className="qty-btn">
+                          <Minus size={16} />
+                        </button>
+                        <input
+                          type="number"
+                          value={editValue}
+                          onChange={(e) => setEditValue(e.target.value)}
+                          className="qty-input"
+                        />
+                        <button onClick={() => adjustQuantity(1)} className="qty-btn">
+                          <Plus size={16} />
+                        </button>
+                        <button onClick={() => saveEdit(item)} className="save-btn">
+                          <Save size={16} />
+                        </button>
+                        <button onClick={cancelEdit} className="cancel-btn">
+                          <X size={16} />
+                        </button>
+                      </div>
+                    ) : (
+                      <span 
+                        className={`quantity ${isLowStock ? 'warning' : ''}`}
+                        onClick={() => startEdit(item)}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        {item['Quantité restante']}
+                      </span>
+                    )}
+                  </td>
+                  <td>{item['Quantité minimale']}</td>
+                  <td>{formatCurrency(item['tarif unitaire HT'])}</td>
+                  <td>{formatCurrency(item['Valeur stock HT'])}</td>
+                  <td>{item.Fournisseur}</td>
+                  <td>{item['Lieu de stockage']}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      
+      <p className="stock-hint">Cliquez sur une quantité pour la modifier</p>
     </div>
   );
 }

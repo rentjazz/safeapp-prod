@@ -1,0 +1,45 @@
+{
+  "name": "SafeApp - Get Calendar Events",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "safeapp-calendar",
+        "responseMode": "lastNode"
+      },
+      "id": "webhook-calendar",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "safeapp-calendar"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": "primary",
+        "timeMin": "={{ $now }}",
+        "timeMax": "={{ $now.plus({ days: 7 }) }}",
+        "options": {}
+      },
+      "id": "google-calendar",
+      "name": "Google Calendar",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1,
+      "position": [450, 300],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "MRm9CnX4CmzMtFkt",
+          "name": "Google Calendar account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{"node": "Google Calendar", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {},
+  "staticData": null
+}
