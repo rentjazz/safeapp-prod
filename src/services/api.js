@@ -5,6 +5,7 @@ console.log('n8n URL:', N8N_URL);
 
 // Helper to extract data from n8n format
 const extractItems = (data) => {
+  console.log('Extract items from:', typeof data, data ? Object.keys(data).slice(0, 5) : 'null');
   if (!data) return [];
   // If it's already an array, return it
   if (Array.isArray(data)) return data;
@@ -14,9 +15,13 @@ const extractItems = (data) => {
   }
   // If it's an object with numeric keys (n8n output format), convert to array
   if (typeof data === 'object' && !Array.isArray(data)) {
-    const keys = Object.keys(data).filter(k => !isNaN(parseInt(k)));
-    if (keys.length > 0) {
-      return keys.map(k => data[k]);
+    const keys = Object.keys(data);
+    const numericKeys = keys.filter(k => !isNaN(parseInt(k)) && k === String(parseInt(k)));
+    console.log('Object keys:', keys.length, 'Numeric keys:', numericKeys.length);
+    if (numericKeys.length > 0) {
+      const result = numericKeys.sort((a, b) => parseInt(a) - parseInt(b)).map(k => data[k]);
+      console.log('Converted to array of', result.length, 'items');
+      return result;
     }
   }
   // If it's a single object

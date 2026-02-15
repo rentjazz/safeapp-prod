@@ -33,11 +33,23 @@
           "name": "Google Calendar account"
         }
       }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Convert items array to clean JSON array\nconst result = items.map(item => item.json);\nreturn [{ json: result }];"
+      },
+      "name": "Format Output",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [650, 300]
     }
   ],
   "connections": {
     "Webhook": {
       "main": [[{"node": "Google Calendar", "type": "main", "index": 0}]]
+    },
+    "Google Calendar": {
+      "main": [[{"node": "Format Output", "type": "main", "index": 0}]]
     }
   },
   "settings": {},
