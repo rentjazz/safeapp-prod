@@ -16,9 +16,12 @@ function Tasks() {
   const loadTasks = async () => {
     try {
       setLoading(true);
+      console.log('Loading tasks...');
       const data = await ApiService.getTasks();
+      console.log('Tasks data received:', JSON.stringify(data).substring(0, 200));
       // Google Tasks API returns items in data
       const items = data.items || [];
+      console.log('Items count:', items.length);
       setTasks(items.sort((a, b) => {
         // Non complétés d'abord
         if (a.status === 'completed' && b.status !== 'completed') return 1;
@@ -27,7 +30,8 @@ function Tasks() {
       }));
       setError(null);
     } catch (err) {
-      setError(err.message);
+      console.error('Error loading tasks:', err);
+      setError(err.message || 'Erreur inconnue');
     } finally {
       setLoading(false);
     }
