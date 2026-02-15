@@ -1,0 +1,56 @@
+{
+  "name": "SafeApp - Get Stock",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "safeapp-stock",
+        "responseMode": "lastNode"
+      },
+      "id": "webhook-stock",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "safeapp-stock"
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "1qmSveh_54AGMoLNqLEbhvc53t8ul6ctR1L7jauD0qUo",
+          "mode": "list",
+          "cachedResultName": "Stock Safe",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qmSveh_54AGMoLNqLEbhvc53t8ul6ctR1L7jauD0qUo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Feuille 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qmSveh_54AGMoLNqLEbhvc53t8ul6ctR1L7jauD0qUo/edit#gid=0"
+        },
+        "options": {}
+      },
+      "id": "google-sheets",
+      "name": "Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [450, 300],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "z0GZAkjqB9lp0b7G",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{"node": "Google Sheets", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {},
+  "staticData": null
+}

@@ -15,18 +15,35 @@ function Stock() {
     try {
       setLoading(true);
       const data = await ApiService.getStock();
-      // Google Sheets returns array of arrays
-      const rows = data || [];
-      const headers = rows[0] || ['Référence', 'Nom', 'Qté', 'Min', 'Emplacement', 'Fournisseur'];
-      const items = rows.slice(1).map((row, index) => ({
-        id: index,
-        reference: row[0] || '',
-        name: row[1] || '',
-        quantity: parseInt(row[2]) || 0,
-        minQuantity: parseInt(row[3]) || 0,
-        location: row[4] || '',
-        supplier: row[5] || ''
-      }));
+      // Handle different response formats
+      let items = [];
+      
+      if (Array.isArray(data)) {
+        // Array format (rows)
+        const rows = data;
+        items = rows.map((row, index) => ({
+          id: index,
+          reference: row[0] || '',
+          name: row[1] || '',
+          quantity: parseInt(row[2]) || 0,
+          minQuantity: parseInt(row[3]) || 0,
+          location: row[4] || '',
+          supplier: row[5] || ''
+        }));
+      } else if (data && typeof data === 'object') {
+        // Object format (single item or multiple as object)
+        const rows = Array.isArray(data) ? data : [data];
+        items = rows.map((item, index) => ({
+          id: index,
+          reference: item.Type || '',
+          name: `${item.Marque || ''} ${item['Modéle'] || ''}`.trim(),
+          quantity: parseInt(item['Quantité restante']) || 0,
+          minQuantity: parseInt(item['Quantité minimale']) || 0,
+          location: item['Lieu de stockage'] || '',
+          supplier: item.Fournisseur || ''
+        }));
+      }
+      
       setItems(items);
       setError(null);
     } catch (err) {

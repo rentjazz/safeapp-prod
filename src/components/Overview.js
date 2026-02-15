@@ -23,13 +23,24 @@ function Overview() {
       setTasks((tasksData.items || []).filter(t => t.status !== 'completed').slice(0, 5));
       setEvents((eventsData.items || []).slice(0, 5));
       
-      const stockRows = stockData.slice(1) || [];
-      setStock(stockRows.map((row, i) => ({
-        id: i,
-        name: row[1] || '',
-        quantity: parseInt(row[2]) || 0,
-        minQuantity: parseInt(row[3]) || 0
-      })).filter(item => item.quantity <= item.minQuantity && item.minQuantity > 0).slice(0, 5));
+      // Handle stock data format (array or object)
+      let stockItems = [];
+      if (Array.isArray(stockData)) {
+        stockItems = stockData.slice(1).map((row, i) => ({
+          id: i,
+          name: row[1] || '',
+          quantity: parseInt(row[2]) || 0,
+          minQuantity: parseInt(row[3]) || 0
+        }));
+      } else if (stockData && typeof stockData === 'object') {
+        stockItems = [{
+          id: 0,
+          name: `${stockData.Marque || ''} ${stockData['Modéle'] || ''}`.trim(),
+          quantity: parseInt(stockData['Quantité restante']) || 0,
+          minQuantity: parseInt(stockData['Quantité minimale']) || 0
+        }];
+      }
+      setStock(stockItems.filter(item => item.quantity <= item.minQuantity && item.minQuantity > 0).slice(0, 5));
 
     } catch (err) {
       console.error(err);

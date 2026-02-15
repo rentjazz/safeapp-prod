@@ -1,0 +1,56 @@
+{
+  "name": "SafeApp - Get Tasks",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "safeapp-tasks",
+        "responseMode": "lastNode"
+      },
+      "id": "webhook-tasks",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "safeapp-tasks"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "task": "MDg2NjcwNDMyNTY4OTM2NzQ4MjQ6MDow",
+        "additionalFields": {}
+      },
+      "id": "google-tasks",
+      "name": "Google Tasks",
+      "type": "n8n-nodes-base.googleTasks",
+      "typeVersion": 1,
+      "position": [450, 300],
+      "credentials": {
+        "googleTasksOAuth2Api": {
+          "id": "meTaS9Qh3u4fBZ1E",
+          "name": "Google Tasks account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ JSON.stringify({ items: $json }) }}"
+      },
+      "name": "Set Output",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [650, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{"node": "Google Tasks", "type": "main", "index": 0}]]
+    },
+    "Google Tasks": {
+      "main": [[{"node": "Set Output", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {},
+  "staticData": null
+}

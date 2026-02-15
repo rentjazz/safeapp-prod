@@ -1,0 +1,43 @@
+{
+  "name": "SafeApp - Delete Task",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "DELETE",
+        "path": "safeapp-task-delete",
+        "responseMode": "lastNode"
+      },
+      "id": "webhook-delete",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "safeapp-task-delete"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "task": "MDg2NjcwNDMyNTY4OTM2NzQ4MjQ6MDow",
+        "taskId": "={{ $json.body.taskId }}"
+      },
+      "id": "google-tasks-delete",
+      "name": "Google Tasks",
+      "type": "n8n-nodes-base.googleTasks",
+      "typeVersion": 1,
+      "position": [450, 300],
+      "credentials": {
+        "googleTasksOAuth2Api": {
+          "id": "meTaS9Qh3u4fBZ1E",
+          "name": "Google Tasks account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{"node": "Google Tasks", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {},
+  "staticData": null
+}
