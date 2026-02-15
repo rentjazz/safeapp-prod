@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  safeapp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        REACT_APP_N8N_URL: https://n8n.superprojetx.com
+    container_name: safeapp-dashboard
+    ports:
+      - "3001:80"
+    restart: unless-stopped
+    networks:
+      - safeapp-network
+
+networks:
+  safeapp-network:
+    driver: bridge

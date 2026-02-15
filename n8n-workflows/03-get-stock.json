@@ -1,0 +1,39 @@
+{
+  "name": "SafeApp - Get Stock",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "safeapp-stock",
+        "responseMode": "lastNode"
+      },
+      "id": "webhook-stock",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "safeapp-stock"
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": "1qmSveh_54AGMoLNqLEbhvc53t8ul6ctR1L7jauD0qUo",
+        "sheetName": "Stock",
+        "range": "A:F",
+        "options": {}
+      },
+      "id": "google-sheets",
+      "name": "Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [450, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{"node": "Google Sheets", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {},
+  "staticData": null
+}

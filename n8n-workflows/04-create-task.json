@@ -1,0 +1,39 @@
+{
+  "name": "SafeApp - Create Task",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "safeapp-task-create",
+        "responseMode": "lastNode"
+      },
+      "id": "webhook-create",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "safeapp-task-create"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "taskList": "={{ $json.body.listId }}",
+        "title": "={{ $json.body.title }}",
+        "notes": "={{ $json.body.notes }}",
+        "due": "={{ $json.body.due }}"
+      },
+      "id": "google-tasks-create",
+      "name": "Google Tasks",
+      "type": "n8n-nodes-base.googleTasks",
+      "typeVersion": 1,
+      "position": [450, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{"node": "Google Tasks", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {},
+  "staticData": null
+}

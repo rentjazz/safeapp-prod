@@ -1,0 +1,35 @@
+{
+  "name": "SafeApp - Get Tasks",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "safeapp-tasks",
+        "responseMode": "lastNode"
+      },
+      "id": "webhook-tasks",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "safeapp-tasks"
+    },
+    {
+      "parameters": {
+        "operation": "getAll"
+      },
+      "id": "google-tasks",
+      "name": "Google Tasks",
+      "type": "n8n-nodes-base.googleTasks",
+      "typeVersion": 1,
+      "position": [450, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{"node": "Google Tasks", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {},
+  "staticData": null
+}
