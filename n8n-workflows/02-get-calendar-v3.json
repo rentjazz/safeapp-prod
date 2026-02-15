@@ -1,0 +1,71 @@
+{
+  "name": "SafeApp - Get Calendar Events",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "safeapp-calendar",
+        "responseMode": "responseNode"
+      },
+      "id": "webhook-calendar",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "safeapp-calendar"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": "primary",
+        "options": {}
+      },
+      "id": "google-calendar",
+      "name": "Google Calendar",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1,
+      "position": [450, 300],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "MRm9CnX4CmzMtFkt",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const now = new Date();\nconst sevenDaysLater = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);\n\nconst eventsArray = items.map(item => item.json).filter(event => {\n  const eventDate = event.start?.dateTime ? new Date(event.start.dateTime) : event.start?.date ? new Date(event.start.date) : null;\n  if (!eventDate) return false;\n  return eventDate >= now && eventDate <= sevenDaysLater;\n}).sort((a, b) => {\n  const dateA = a.start?.dateTime ? new Date(a.start.dateTime) : new Date(a.start?.date || 0);\n  const dateB = b.start?.dateTime ? new Date(b.start.dateTime) : new Date(b.start?.date || 0);\n  return dateA - dateB;\n});\n\nreturn [{ json: { events: eventsArray } }];"
+      },
+      "id": "code-filter",
+      "name": "Filter Events",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json.events) }}"
+      },
+      "id": "respond",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [850, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{"node": "Google Calendar", "type": "main", "index": 0}]]
+    },
+    "Google Calendar": {
+      "main": [[{"node": "Filter Events", "type": "main", "index": 0}]]
+    },
+    "Filter Events": {
+      "main": [[{"node": "Respond to Webhook", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {},
+  "staticData": null
+}

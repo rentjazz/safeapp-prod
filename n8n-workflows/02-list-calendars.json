@@ -1,0 +1,69 @@
+{
+  "name": "SafeApp - List Calendars",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "safeapp-calendars-list",
+        "responseMode": "responseNode"
+      },
+      "id": "webhook-list",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "safeapp-calendars-list"
+    },
+    {
+      "parameters": {
+        "operation": "listCalendars"
+      },
+      "id": "google-calendar-list",
+      "name": "Google Calendar",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1,
+      "position": [450, 300],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "MRm9CnX4CmzMtFkt",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const calendarsArray = items.map(item => item.json);\nreturn [{ json: { calendars: calendarsArray } }];"
+      },
+      "id": "code-aggregate",
+      "name": "Aggregate",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json.calendars) }}"
+      },
+      "id": "respond",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [850, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{"node": "Google Calendar", "type": "main", "index": 0}]]
+    },
+    "Google Calendar": {
+      "main": [[{"node": "Aggregate", "type": "main", "index": 0}]]
+    },
+    "Aggregate": {
+      "main": [[{"node": "Respond to Webhook", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {},
+  "staticData": null
+}
