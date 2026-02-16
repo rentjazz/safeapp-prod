@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ApiService from './services/api';
 import './App.css';
+import safehdfLogo from './assets/safehdf-logo.jpg';
 
 // Components
 import Tasks from './components/Tasks';
@@ -36,8 +37,7 @@ function App() {
     <div className="app">
       <aside className="sidebar">
         <div className="logo-container">
-          <span className="logo-text-safe">SAFE</span>
-          <span className="logo-text-hdf">H.D.F</span>
+          <img className="logo-image" src={safehdfLogo} alt="Safe HDF" />
         </div>
         
         <nav className="nav">
