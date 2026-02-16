@@ -5,16 +5,21 @@
 }
 
 :root {
-  --bg-primary: #0f0f1a;
-  --bg-secondary: #1a1a2e;
-  --bg-card: #252542;
-  --accent-blue: #4facfe;
+  /* Safe HDF brand-ish theme (to fine-tune once you confirm exact hex codes) */
+  --bg-primary: #0b1220;      /* deep navy */
+  --bg-secondary: #0f1b33;    /* navy */
+  --bg-card: #111f3d;         /* card navy */
+
+  --accent-blue: #2f80ff;     /* primary */
+  --accent-blue-2: #00b2ff;   /* secondary */
+
   --accent-green: #22c55e;
-  --accent-orange: #f97316;
+  --accent-orange: #f59e0b;
   --accent-red: #ef4444;
+
   --text-primary: #ffffff;
-  --text-secondary: #a0a0b0;
-  --border-color: #2d2d4a;
+  --text-secondary: #b5c2e0;
+  --border-color: rgba(255, 255, 255, 0.08);
 }
 
 body {
@@ -45,15 +50,18 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
   padding: 16px;
   margin-bottom: 32px;
-  font-size: 24px;
-  font-weight: 700;
 }
 
-.logo-text-safe { color: var(--text-primary); }
-.logo-text-hdf { color: var(--accent-blue); }
+.logo-image {
+  width: 100%;
+  max-width: 190px;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 8px 18px rgba(0,0,0,0.35));
+}
 
 .nav {
   display: flex;
@@ -83,7 +91,7 @@ body {
 }
 
 .nav-item.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-blue-2) 100%);
   color: var(--text-primary);
 }
 
