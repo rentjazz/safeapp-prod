@@ -36,8 +36,11 @@ function App() {
     <div className="app">
       <aside className="sidebar">
         <div className="logo-container">
-          <span className="logo-text-safe">SAFE</span>
-          <span className="logo-text-hdf">H.D.F</span>
+          <img
+            className="logo-image"
+            src="/safehdf-logo.jpg"
+            alt="Safe HDF"
+          />
         </div>
         
         <nav className="nav">
