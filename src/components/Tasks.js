@@ -7,6 +7,7 @@ function Tasks() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [newTask, setNewTask] = useState('');
+  const [adding, setAdding] = useState(false);
   const [listId, setListId] = useState('@default');
 
   useEffect(() => {
@@ -61,17 +62,22 @@ function Tasks() {
   };
 
   const addTask = async (e) => {
-    e.preventDefault();
-    if (!newTask.trim()) return;
+    e?.preventDefault?.();
+    const title = newTask.trim();
+    if (!title || adding) return;
+
     try {
-      await ApiService.createTask({
-        listId,
-        title: newTask
-      });
+      setAdding(true);
+      console.log('Creating task:', title);
+      // n8n workflow expects { title, notes?, due? }
+      await ApiService.createTask({ title });
       setNewTask('');
-      loadTasks();
+      await loadTasks();
     } catch (err) {
-      alert('Erreur: ' + err.message);
+      console.error('Error creating task:', err);
+      alert('Erreur création tâche: ' + (err.message || 'Erreur inconnue'));
+    } finally {
+      setAdding(false);
     }
   };
 
@@ -93,7 +99,13 @@ function Tasks() {
           placeholder="Nouvelle tâche..."
           className="task-input"
         />
-        <button type="submit" className="btn-primary">
+        <button
+          type="submit"
+          className="btn-primary"
+          onClick={addTask}
+          disabled={adding || !newTask.trim()}
+          title={adding ? 'Création...' : 'Créer une tâche'}
+        >
           <Plus size={20} />
         </button>
       </form>
