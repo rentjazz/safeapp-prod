@@ -14,7 +14,8 @@
   /* App layout */
   --bg-primary: var(--c-black);     /* page background */
   --bg-secondary: var(--c-white);   /* sidebar / "onglet" background */
-  --bg-card: var(--c-purple);       /* cards / bubbles */
+  --bg-card: var(--c-black);        /* cards / bubbles - NOW BLACK */
+  --bg-content: var(--c-gray);      /* content area - NOW GRAY */
 
   --accent: var(--c-purple);
   --accent-2: #9a2a2b; /* slightly lighter purple for gradients/hover */
@@ -53,8 +54,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 16px;
-  margin-bottom: 32px;
+  padding: 0;
+  margin-bottom: 24px;
+  background: transparent;
 }
 
 .logo-image {
@@ -63,7 +65,7 @@ body {
   height: auto;
   object-fit: contain;
   display: block;
-  filter: drop-shadow(0 8px 18px rgba(0,0,0,0.35));
+  filter: none;
 }
 
 .nav {
@@ -110,7 +112,7 @@ body {
   align-items: center;
   padding: 16px 20px;
   border-bottom: 1px solid var(--border-color);
-  background: var(--bg-primary);
+  background: var(--bg-content);
 }
 
 .header h1 {
@@ -121,14 +123,25 @@ body {
 
 .content {
   padding: 20px;
+  background: var(--bg-content);
+  min-height: calc(100vh - 52px);
 }
 
-/* Cards */
+/* Cards - NOW BLACK with PURPLE titles and WHITE text */
 .card, .dashboard-card {
   background: var(--bg-card);
   border-radius: 14px;
   padding: 16px;
   border: 1px solid rgba(255,255,255,0.08);
+}
+
+.card h3, .dashboard-card h3 {
+  color: var(--c-purple);
+}
+
+.card p, .card span, .card div,
+.dashboard-card p, .dashboard-card span, .dashboard-card div {
+  color: var(--c-white);
 }
 
 /* Loading & Error */
@@ -169,10 +182,11 @@ body {
 .stat-card h3 {
   font-size: 22px;
   font-weight: 700;
+  color: var(--c-purple);
 }
 
 .stat-card p {
-  color: rgba(255,255,255,0.85);
+  color: var(--c-white);
   font-size: 12px;
 }
 
@@ -189,7 +203,7 @@ body {
   gap: 8px;
   margin-bottom: 12px;
   font-size: 13px;
-  color: rgba(255,255,255,0.90);
+  color: var(--c-purple);
 }
 
 .dashboard-item {
@@ -197,7 +211,7 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 12px 0;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 
 .dashboard-item:last-child {
@@ -205,12 +219,12 @@ body {
 }
 
 .dashboard-item small {
-  color: var(--text-secondary);
+  color: rgba(255,255,255,0.75);
   font-size: 12px;
 }
 
 .dashboard-item small.warning {
-  color: var(--accent-orange);
+  color: #f59e0b;
 }
 
 /* Tasks */
@@ -224,8 +238,8 @@ body {
   flex: 1;
   padding: 12px 16px;
   border-radius: 10px;
-  border: 1px solid var(--border-color);
-  background: var(--bg-primary);
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(0,0,0,0.3);
   color: var(--text-primary);
   font-size: 14px;
 }
@@ -234,7 +248,7 @@ body {
   padding: 12px 20px;
   border-radius: 10px;
   border: none;
-  background: var(--accent-blue);
+  background: var(--c-purple);
   color: white;
   cursor: pointer;
   display: flex;
@@ -253,9 +267,9 @@ body {
   align-items: center;
   gap: 12px;
   padding: 16px;
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 12px;
-  border: 1px solid var(--border-color);
+  border: 1px solid rgba(255,255,255,0.08);
 }
 
 .task-item.completed {
@@ -269,7 +283,7 @@ body {
 .task-toggle {
   background: none;
   border: none;
-  color: var(--accent-green);
+  color: #22c55e;
   cursor: pointer;
 }
 
@@ -280,6 +294,7 @@ body {
 .task-title {
   display: block;
   font-weight: 500;
+  color: var(--c-white);
 }
 
 .task-date {
@@ -287,26 +302,26 @@ body {
   align-items: center;
   gap: 4px;
   font-size: 12px;
-  color: var(--text-secondary);
+  color: rgba(255,255,255,0.65);
   margin-top: 4px;
 }
 
 .task-delete {
   background: none;
   border: none;
-  color: var(--text-secondary);
+  color: rgba(255,255,255,0.65);
   cursor: pointer;
   padding: 4px;
 }
 
 .task-delete:hover {
-  color: var(--accent-red);
+  color: #ef4444;
 }
 
 /* Calendar */
 .calendar-container h3 {
   margin-bottom: 24px;
-  color: var(--text-secondary);
+  color: var(--c-purple);
 }
 
 .event-list {
@@ -319,16 +334,16 @@ body {
   display: flex;
   gap: 16px;
   padding: 16px;
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 12px;
-  border: 1px solid var(--border-color);
+  border: 1px solid rgba(255,255,255,0.08);
 }
 
 .event-icon {
   width: 48px;
   height: 48px;
   border-radius: 12px;
-  background: linear-gradient(135deg, var(--accent-blue) 0%, #764ba2 100%);
+  background: var(--c-purple);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -342,6 +357,7 @@ body {
 .event-title {
   font-weight: 600;
   margin-bottom: 4px;
+  color: var(--c-white);
 }
 
 .event-time {
@@ -349,12 +365,12 @@ body {
   align-items: center;
   gap: 4px;
   font-size: 13px;
-  color: var(--text-secondary);
+  color: rgba(255,255,255,0.75);
 }
 
 .event-location {
   font-size: 13px;
-  color: var(--text-secondary);
+  color: rgba(255,255,255,0.75);
   margin-top: 4px;
 }
 
@@ -381,20 +397,21 @@ body {
 .stock-table td {
   text-align: left;
   padding: 12px 16px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
   white-space: nowrap;
+  color: var(--c-white);
 }
 
 .stock-table th {
-  color: var(--text-secondary);
-  font-weight: 500;
+  color: var(--c-purple);
+  font-weight: 600;
   font-size: 11px;
   text-transform: uppercase;
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(122, 31, 32, 0.15);
 }
 
 .stock-table tr:hover {
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .stock-table tr.low-stock {
@@ -402,7 +419,7 @@ body {
 }
 
 .stock-table td.warning {
-  color: var(--accent-orange);
+  color: #f59e0b;
   font-weight: 600;
 }
 
@@ -413,12 +430,13 @@ body {
 .quantity {
   padding: 6px 12px;
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.08);
   transition: all 0.2s;
+  color: var(--c-white);
 }
 
 .quantity:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .quantity-editor {
@@ -432,8 +450,8 @@ body {
   height: 28px;
   border-radius: 6px;
   border: none;
-  background: var(--bg-secondary);
-  color: var(--text-primary);
+  background: var(--c-purple);
+  color: var(--c-white);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -441,15 +459,15 @@ body {
 }
 
 .qty-btn:hover {
-  background: var(--accent-blue);
+  background: var(--accent-2);
 }
 
 .qty-input {
   width: 60px;
   padding: 6px;
   border-radius: 6px;
-  border: 1px solid var(--border-color);
-  background: var(--bg-primary);
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(0,0,0,0.3);
   color: var(--text-primary);
   text-align: center;
   font-size: 14px;
@@ -460,7 +478,7 @@ body {
   height: 28px;
   border-radius: 6px;
   border: none;
-  background: var(--accent-green);
+  background: #22c55e;
   color: white;
   cursor: pointer;
   display: flex;
@@ -473,7 +491,7 @@ body {
   height: 28px;
   border-radius: 6px;
   border: none;
-  background: var(--accent-red);
+  background: #ef4444;
   color: white;
   cursor: pointer;
   display: flex;
@@ -483,7 +501,7 @@ body {
 
 .stock-hint {
   text-align: center;
-  color: var(--text-secondary);
+  color: rgba(255,255,255,0.75);
   font-size: 13px;
   margin-top: 16px;
 }
