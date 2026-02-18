@@ -180,7 +180,7 @@ body {
 }
 
 .stat-card h3 {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 700;
   color: var(--c-purple);
 }
@@ -417,12 +417,13 @@ body {
   border-bottom: 1px solid rgba(255,255,255,0.08);
   white-space: nowrap;
   color: var(--c-white);
+  font-size: 12px;
 }
 
 .stock-table th {
   color: var(--c-purple);
   font-weight: 600;
-  font-size: 11px;
+  font-size: 12px;
   text-transform: uppercase;
   background: rgba(122, 31, 32, 0.15);
 }
@@ -519,7 +520,7 @@ body {
 .stock-hint {
   text-align: center;
   color: rgba(255,255,255,0.75);
-  font-size: 13px;
+  font-size: 12px;
   margin-top: 16px;
 }
 
