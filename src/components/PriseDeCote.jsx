@@ -371,7 +371,7 @@ function PriseDeCote() {
       </Grid>
 
       {/* Dialog mailto info */}
-      <Dialog open={showMailDialog} onClose={() => setShowMailDialog(false)} PaperProps={{ sx: { '& .MuiDialogTitle-root, & .MuiDialogContent-root, & .MuiDialogActions-root': { fontSize: FONT_SIZE } } } }}>
+      <Dialog open={showMailDialog} onClose={() => setShowMailDialog(false)}>
         <DialogTitle sx={{ fontSize: FONT_SIZE }}>Texte copié !</DialogTitle>
         <DialogContent>
           <Typography sx={{ fontSize: FONT_SIZE }}>Le texte est copié dans votre presse-papier.</Typography>
