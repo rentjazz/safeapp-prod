@@ -85,6 +85,7 @@ function Tasks() {
 
   return (
     <div className="tasks-container">
+      <h3 style={{ fontSize: '13px', fontWeight: 600, color: 'var(--c-purple)', marginBottom: '16px' }}>Liste des tâches</h3>
       <form onSubmit={addTask} className="add-task-form">
         <input
           type="text"

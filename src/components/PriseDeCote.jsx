@@ -11,7 +11,6 @@ import {
   ImageList,
   ImageListItem,
   Alert,
-  CircularProgress,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -34,6 +33,8 @@ const COLORS = {
   textSecondary: '#b0b0b0',
   success: '#4caf50'
 };
+
+const FONT_SIZE = '13px';
 
 function PriseDeCote() {
   // États du formulaire
@@ -200,7 +201,7 @@ function PriseDeCote() {
   if (showSuccess) {
     return (
       <Box sx={{ bgcolor: COLORS.background, minHeight: '100vh', p: 3, textAlign: 'center' }}>
-        <Alert severity="success" sx={{ bgcolor: COLORS.success, color: '#fff', fontSize: '1.2em', py: 2 }}>
+        <Alert severity="success" sx={{ bgcolor: COLORS.success, color: '#fff', fontSize: FONT_SIZE, py: 2 }}>
           ✅ Client email ouvert !<br />
           <small>N'oubliez pas d'attacher les photos et l'audio si besoin.</small>
         </Alert>
@@ -210,7 +211,7 @@ function PriseDeCote() {
 
   return (
     <Box sx={{ bgcolor: COLORS.background, minHeight: '100vh', p: 2 }}>
-      <Typography variant="h4" sx={{ color: COLORS.primary, fontWeight: 'bold', mb: 2 }}>
+      <Typography sx={{ color: COLORS.primary, fontWeight: 600, mb: 2, fontSize: FONT_SIZE }}>
         🎯 Prise de Côte
       </Typography>
 
@@ -222,7 +223,8 @@ function PriseDeCote() {
             label="Marque *"
             value={marque}
             onChange={(e) => setMarque(e.target.value)}
-            sx={{ mb: 2, '& .MuiInputBase-root': { bgcolor: COLORS.card }, '& .MuiInputBase-input': { color: COLORS.text } }}
+            sx={{ mb: 2, '& .MuiInputBase-root': { bgcolor: COLORS.card }, '& .MuiInputBase-input': { color: COLORS.text, fontSize: FONT_SIZE } }}
+            InputLabelProps={{ style: { fontSize: FONT_SIZE } }}
           />
         </Grid>
         <Grid item xs={12} md={6}>
@@ -231,7 +233,8 @@ function PriseDeCote() {
             label="Modèle *"
             value={modele}
             onChange={(e) => setModele(e.target.value)}
-            sx={{ mb: 2, '& .MuiInputBase-root': { bgcolor: COLORS.card }, '& .MuiInputBase-input': { color: COLORS.text } }}
+            sx={{ mb: 2, '& .MuiInputBase-root': { bgcolor: COLORS.card }, '& .MuiInputBase-input': { color: COLORS.text, fontSize: FONT_SIZE } }}
+            InputLabelProps={{ style: { fontSize: FONT_SIZE } }}
           />
         </Grid>
 
@@ -239,14 +242,14 @@ function PriseDeCote() {
         <Grid item xs={12}>
           <Card sx={{ bgcolor: COLORS.card, mb: 2 }}>
             <CardContent>
-              <Typography variant="h6" sx={{ color: COLORS.text, mb: 1 }}>
+              <Typography sx={{ color: COLORS.text, mb: 1, fontSize: FONT_SIZE, fontWeight: 600 }}>
                 📸 Photos ({photos.length})
               </Typography>
               <Button
                 variant="contained"
                 component="label"
                 startIcon={<CameraAlt />}
-                sx={{ bgcolor: COLORS.primary, mb: 1 }}
+                sx={{ bgcolor: COLORS.primary, mb: 1, fontSize: FONT_SIZE }}
               >
                 Ajouter photos
                 <input type="file" hidden multiple accept="image/*" onChange={handlePhotoUpload} />
@@ -257,7 +260,7 @@ function PriseDeCote() {
                     variant="outlined"
                     size="small"
                     onClick={downloadAllPhotos}
-                    sx={{ color: COLORS.text, borderColor: COLORS.textSecondary, mb: 1, mr: 1 }}
+                    sx={{ color: COLORS.text, borderColor: COLORS.textSecondary, mb: 1, mr: 1, fontSize: FONT_SIZE }}
                   >
                     💾 Télécharger toutes les photos
                   </Button>
@@ -285,27 +288,27 @@ function PriseDeCote() {
         <Grid item xs={12}>
           <Card sx={{ bgcolor: COLORS.card, mb: 2 }}>
             <CardContent>
-              <Typography variant="h6" sx={{ color: COLORS.text, mb: 1 }}>
+              <Typography sx={{ color: COLORS.text, mb: 1, fontSize: FONT_SIZE, fontWeight: 600 }}>
                 🎤 Dictée vocale
               </Typography>
               <Button
                 variant="contained"
                 onClick={isRecording ? stopRecording : startRecording}
                 startIcon={isRecording ? <Stop /> : <Mic />}
-                sx={{ bgcolor: isRecording ? '#ff4444' : COLORS.primary, mb: 1 }}
+                sx={{ bgcolor: isRecording ? '#ff4444' : COLORS.primary, mb: 1, fontSize: FONT_SIZE }}
               >
                 {isRecording ? `Arrêter (${formatTime(recordingTime)})` : 'Enregistrer'}
               </Button>
               {audioBlob && (
                 <Box>
-                  <Typography variant="body2" sx={{ color: COLORS.success, mb: 1 }}>
+                  <Typography sx={{ color: COLORS.success, mb: 1, fontSize: FONT_SIZE }}>
                     ✅ Audio enregistré ({Math.round(audioBlob.size/1024)} KB)
                   </Typography>
                   <Button
                     variant="outlined"
                     size="small"
                     onClick={downloadAudio}
-                    sx={{ color: COLORS.success, borderColor: COLORS.success }}
+                    sx={{ color: COLORS.success, borderColor: COLORS.success, fontSize: FONT_SIZE }}
                   >
                     💾 Télécharger l'audio
                   </Button>
@@ -325,7 +328,8 @@ function PriseDeCote() {
             placeholder="Position perçage: ...&#10;Emplacement pênes: ...&#10;Épaisseur porte: ..."
             value={cotes}
             onChange={(e) => setCotes(e.target.value)}
-            sx={{ '& .MuiInputBase-root': { bgcolor: COLORS.card }, '& .MuiInputBase-input': { color: COLORS.text, fontFamily: 'monospace' } }}
+            sx={{ '& .MuiInputBase-root': { bgcolor: COLORS.card }, '& .MuiInputBase-input': { color: COLORS.text, fontFamily: 'monospace', fontSize: FONT_SIZE } }}
+            InputLabelProps={{ style: { fontSize: FONT_SIZE } }}
           />
         </Grid>
 
@@ -338,7 +342,8 @@ function PriseDeCote() {
             label="Notes complémentaires"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            sx={{ '& .MuiInputBase-root': { bgcolor: COLORS.card }, '& .MuiInputBase-input': { color: COLORS.text } }}
+            sx={{ '& .MuiInputBase-root': { bgcolor: COLORS.card }, '& .MuiInputBase-input': { color: COLORS.text, fontSize: FONT_SIZE } }}
+            InputLabelProps={{ style: { fontSize: FONT_SIZE } }}
           />
         </Grid>
 
@@ -347,36 +352,34 @@ function PriseDeCote() {
           <Button
             fullWidth
             variant="contained"
-            size="large"
             startIcon={<Send />}
             onClick={sendEmail}
-            sx={{ bgcolor: COLORS.success, py: 2, mb: 2, '&:hover': { bgcolor: '#388e3c' } }}
+            sx={{ bgcolor: COLORS.success, py: 1.5, mb: 2, '&:hover': { bgcolor: '#388e3c' }, fontSize: FONT_SIZE }}
           >
-            Ouvrir mon client email
+            📧 Ouvrir mon client email
           </Button>
           <Button
             fullWidth
             variant="outlined"
-            size="large"
             startIcon={<ContentCopy />}
             onClick={copyToClipboard}
-            sx={{ color: COLORS.text, borderColor: COLORS.textSecondary }}
+            sx={{ color: COLORS.text, borderColor: COLORS.textSecondary, fontSize: FONT_SIZE }}
           >
-            Copier le texte dans le presse-papier
+            📋 Copier le texte dans le presse-papier
           </Button>
         </Grid>
       </Grid>
 
       {/* Dialog mailto info */}
-      <Dialog open={showMailDialog} onClose={() => setShowMailDialog(false)}>
-        <DialogTitle>Texte copié !</DialogTitle>
+      <Dialog open={showMailDialog} onClose={() => setShowMailDialog(false)} PaperProps={{ sx: { '& .MuiDialogTitle-root, & .MuiDialogContent-root, & .MuiDialogActions-root': { fontSize: FONT_SIZE } } } }}>
+        <DialogTitle sx={{ fontSize: FONT_SIZE }}>Texte copié !</DialogTitle>
         <DialogContent>
-          <Typography>Le texte est copié dans votre presse-papier.</Typography>
-          <Typography sx={{ mt: 1 }}><strong>Email :</strong> contact@safehdf.com</Typography>
-          <Typography sx={{ mt: 1 }}><strong>Sujet :</strong> Prise de Côte - {marque} {modele}</Typography>
+          <Typography sx={{ fontSize: FONT_SIZE }}>Le texte est copié dans votre presse-papier.</Typography>
+          <Typography sx={{ mt: 1, fontSize: FONT_SIZE }}><strong>Email :</strong> contact@safehdf.com</Typography>
+          <Typography sx={{ mt: 1, fontSize: FONT_SIZE }}><strong>Sujet :</strong> Prise de Côte - {marque} {modele}</Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setShowMailDialog(false)}>Fermer</Button>
+          <Button onClick={() => setShowMailDialog(false)} sx={{ fontSize: FONT_SIZE }}>Fermer</Button>
         </DialogActions>
       </Dialog>
     </Box>
