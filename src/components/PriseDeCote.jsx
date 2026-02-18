@@ -11,15 +11,19 @@ import {
   ImageList,
   ImageListItem,
   Alert,
-  CircularProgress
+  CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions
 } from '@mui/material';
 import {
   Mic,
   Stop,
   CameraAlt,
-  Delete,
   Close,
-  Send
+  Send,
+  ContentCopy
 } from '@mui/icons-material';
 
 const COLORS = {
@@ -43,8 +47,8 @@ function PriseDeCote() {
   // États UI
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
-  const [sending, setSending] = useState(false);
-  const [sent, setSent] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [showMailDialog, setShowMailDialog] = useState(false);
   
   const mediaRecorderRef = useRef(null);
   const timerRef = useRef(null);
@@ -55,7 +59,7 @@ function PriseDeCote() {
     files.forEach(file => {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPhotos(prev => [...prev, { preview: reader.result, file }]);
+        setPhotos(prev => [...prev, { preview: reader.result, file, name: file.name }]);
       };
       reader.readAsDataURL(file);
     });
@@ -75,7 +79,7 @@ function PriseDeCote() {
 
       mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
       mediaRecorder.onstop = () => {
-        const blob = new Blob(chunks, { type: 'audio/wav' });
+        const blob = new Blob(chunks, { type: 'audio/webm' });
         setAudioBlob(blob);
         stream.getTracks().forEach(track => track.stop());
       };
@@ -101,75 +105,69 @@ function PriseDeCote() {
 
   const formatTime = (s) => `${Math.floor(s/60)}:${(s%60).toString().padStart(2,'0')}`;
 
-  // Envoi email
-  const sendEmail = async () => {
+  // Générer le contenu de l'email
+  const generateEmailContent = () => {
+    const date = new Date().toLocaleString('fr-FR');
+    
+    let content = `PRISE DE CÔTE - ${marque} ${modele}\n`;
+    content += `Date: ${date}\n`;
+    content += `============================\n\n`;
+    content += `MARQUE: ${marque}\n`;
+    content += `MODÈLE: ${modele}\n\n`;
+    content += `COTES ET MESURES:\n`;
+    content += `${cotes || 'Non renseigné'}\n\n`;
+    content += `NOTES COMPLÉMENTAIRES:\n`;
+    content += `${notes || 'Aucune'}\n\n`;
+    content += `PHOTOS:\n`;
+    content += `${photos.length} photo(s) attachée(s)\n\n`;
+    
+    if (audioBlob) {
+      content += `AUDIO:\n`;
+      content += `Audio enregistré (${Math.round(audioBlob.size/1024)} KB)\n\n`;
+    }
+    
+    return content;
+  };
+
+  // Envoi par email avec mailto:
+  const sendEmail = () => {
     if (!marque || !modele) {
       alert('Veuillez renseigner la marque et le modèle');
       return;
     }
 
-    setSending(true);
+    const subject = encodeURIComponent(`📋 Prise de Côte - ${marque} ${modele}`);
+    const body = encodeURIComponent(generateEmailContent());
     
-    try {
-      // Préparer le contenu HTML de l'email
-      const photosHtml = photos.map((p, i) => `<p>Photo ${i+1}: ${p.preview.substring(0,50)}...</p>`).join('');
-      
-      const htmlContent = `
-        <h2>🎯 Prise de Côte - ${marque} ${modele}</h2>
-        <h3>📏 Cotes:</h3>
-        <pre style="background:#f0f0f0;padding:10px">${cotes || 'Aucune'}</pre>
-        <h3>📝 Notes:</h3>
-        <p>${notes || 'Aucune'}</p>
-        <h3>📸 Photos (${photos.length}):</h3>
-        ${photosHtml || '<p>Aucune photo</p>'}
-        <h3>🎤 Audio:</h3>
-        <p>${audioBlob ? 'Audio joint ci-dessus' : 'Aucun audio'}</p>
-      `;
-
-      const ficheData = {
-        marque,
-        modele,
-        photos: photos.map(p => p.preview),
-        cotes,
-        notes,
-        date: new Date().toISOString()
-      };
-
-      await fetch('https://n8n.superprojetx.com/webhook/safeapp-send-email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          to: 'contact@safehdf.com',
-          subject: `📋 Prise de Côte - ${marque} ${modele}`,
-          html: htmlContent,
-          fiche: ficheData
-        })
-      });
-
-      setSent(true);
-      // Reset après 3 secondes
-      setTimeout(() => {
-        setMarque('');
-        setModele('');
-        setPhotos([]);
-        setCotes('');
-        setNotes('');
-        setAudioBlob(null);
-        setSent(false);
-      }, 3000);
-      
-    } catch (err) {
-      alert('Erreur envoi: ' + err.message);
-    } finally {
-      setSending(false);
-    }
+    // Ouvrir le client email
+    window.location.href = `mailto:contact@safehdf.com?subject=${subject}&body=${body}`;
+    
+    // Montrer le succès
+    setShowSuccess(true);
+    setTimeout(() => {
+      setShowSuccess(false);
+      // Reset
+      setMarque('');
+      setModele('');
+      setPhotos([]);
+      setCotes('');
+      setNotes('');
+      setAudioBlob(null);
+    }, 5000);
   };
 
-  if (sent) {
+  // Copier dans le presse-papier
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(generateEmailContent());
+    setShowMailDialog(true);
+  };
+
+  if (showSuccess) {
     return (
       <Box sx={{ bgcolor: COLORS.background, minHeight: '100vh', p: 3, textAlign: 'center' }}>
-        <Alert severity="success" sx={{ bgcolor: COLORS.success, color: '#fff', fontSize: '1.2em' }}>
-          ✅ Email envoyé à contact@safehdf.com !
+        <Alert severity="success" sx={{ bgcolor: COLORS.success, color: '#fff', fontSize: '1.2em', py: 2 }}>
+          ✅ Client email ouvert !<br />
+          <small>N'oubliez pas d'attacher les photos et l'audio si besoin.</small>
         </Alert>
       </Box>
     );
@@ -186,7 +184,7 @@ function PriseDeCote() {
         <Grid item xs={12} md={6}>
           <TextField
             fullWidth
-            label="Marque"
+            label="Marque *"
             value={marque}
             onChange={(e) => setMarque(e.target.value)}
             sx={{ mb: 2, '& .MuiInputBase-root': { bgcolor: COLORS.card }, '& .MuiInputBase-input': { color: COLORS.text } }}
@@ -195,7 +193,7 @@ function PriseDeCote() {
         <Grid item xs={12} md={6}>
           <TextField
             fullWidth
-            label="Modèle"
+            label="Modèle *"
             value={modele}
             onChange={(e) => setModele(e.target.value)}
             sx={{ mb: 2, '& .MuiInputBase-root': { bgcolor: COLORS.card }, '& .MuiInputBase-input': { color: COLORS.text } }}
@@ -226,7 +224,7 @@ function PriseDeCote() {
                       <IconButton
                         size="small"
                         onClick={() => removePhoto(i)}
-                        sx={{ position: 'absolute', top: 2, right: 2, bgcolor: COLORS.error, color: '#fff' }}
+                        sx={{ position: 'absolute', top: 2, right: 2, bgcolor: '#f44336', color: '#fff' }}
                       >
                         <Close fontSize="small" />
                       </IconButton>
@@ -256,6 +254,8 @@ function PriseDeCote() {
               {audioBlob && (
                 <Typography variant="body2" sx={{ color: COLORS.success }}>
                   ✅ Audio enregistré ({Math.round(audioBlob.size/1024)} KB)
+                  <br />
+                  <small>L'audio sera à télécharger manuellement</small>
                 </Typography>
               )}
             </CardContent>
@@ -289,21 +289,43 @@ function PriseDeCote() {
           />
         </Grid>
 
-        {/* Bouton Envoyer */}
+        {/* Boutons */}
         <Grid item xs={12}>
           <Button
             fullWidth
             variant="contained"
             size="large"
-            startIcon={sending ? <CircularProgress size={20} /> : <Send />}
+            startIcon={<Send />}
             onClick={sendEmail}
-            disabled={sending}
-            sx={{ bgcolor: COLORS.success, py: 2, '&:hover': { bgcolor: '#388e3c' } }}
+            sx={{ bgcolor: COLORS.success, py: 2, mb: 2, '&:hover': { bgcolor: '#388e3c' } }}
           >
-            {sending ? 'Envoi en cours...' : 'Envoyer par email'}
+            Ouvrir mon client email
+          </Button>
+          <Button
+            fullWidth
+            variant="outlined"
+            size="large"
+            startIcon={<ContentCopy />}
+            onClick={copyToClipboard}
+            sx={{ color: COLORS.text, borderColor: COLORS.textSecondary }}
+          >
+            Copier le texte dans le presse-papier
           </Button>
         </Grid>
       </Grid>
+
+      {/* Dialog mailto info */}
+      <Dialog open={showMailDialog} onClose={() => setShowMailDialog(false)}>
+        <DialogTitle>Texte copié !</DialogTitle>
+        <DialogContent>
+          <Typography>Le texte est copié dans votre presse-papier.</Typography>
+          <Typography sx={{ mt: 1 }}><strong>Email :</strong> contact@safehdf.com</Typography>
+          <Typography sx={{ mt: 1 }}><strong>Sujet :</strong> Prise de Côte - {marque} {modele}</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setShowMailDialog(false)}>Fermer</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }
