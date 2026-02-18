@@ -105,6 +105,36 @@ function PriseDeCote() {
 
   const formatTime = (s) => `${Math.floor(s/60)}:${(s%60).toString().padStart(2,'0')}`;
 
+  // Télécharger une photo
+  const downloadPhoto = (photo, index) => {
+    const link = document.createElement('a');
+    link.href = photo.preview;
+    link.download = `photo_${marque}_${modele}_${index + 1}.jpg`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // Télécharger toutes les photos en ZIP (simulation - téléchargement individuel)
+  const downloadAllPhotos = () => {
+    photos.forEach((photo, index) => {
+      setTimeout(() => downloadPhoto(photo, index), index * 500);
+    });
+  };
+
+  // Télécharger l'audio
+  const downloadAudio = () => {
+    if (!audioBlob) return;
+    const url = URL.createObjectURL(audioBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `audio_${marque}_${modele}.webm`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   // Générer le contenu de l'email
   const generateEmailContent = () => {
     const date = new Date().toLocaleString('fr-FR');
@@ -119,12 +149,17 @@ function PriseDeCote() {
     content += `NOTES COMPLÉMENTAIRES:\n`;
     content += `${notes || 'Aucune'}\n\n`;
     content += `PHOTOS:\n`;
-    content += `${photos.length} photo(s) attachée(s)\n\n`;
+    content += `${photos.length} photo(s) à joindre manuellement\n`;
+    content += `(Utilisez les boutons "Télécharger" dans l'app)\n\n`;
     
     if (audioBlob) {
       content += `AUDIO:\n`;
-      content += `Audio enregistré (${Math.round(audioBlob.size/1024)} KB)\n\n`;
+      content += `Audio enregistré (${Math.round(audioBlob.size/1024)} KB)\n`;
+      content += `(Utilisez le bouton "Télécharger l'audio" dans l'app)\n\n`;
     }
+    
+    content += `---\n`;
+    content += `Envoyé depuis SafeApp - Prise de Côte\n`;
     
     return content;
   };
@@ -217,20 +252,30 @@ function PriseDeCote() {
                 <input type="file" hidden multiple accept="image/*" onChange={handlePhotoUpload} />
               </Button>
               {photos.length > 0 && (
-                <ImageList cols={4} rowHeight={80}>
-                  {photos.map((photo, i) => (
-                    <ImageListItem key={i} sx={{ position: 'relative' }}>
-                      <img src={photo.preview} style={{ height: '100%', objectFit: 'cover', borderRadius: 4 }} />
-                      <IconButton
-                        size="small"
-                        onClick={() => removePhoto(i)}
-                        sx={{ position: 'absolute', top: 2, right: 2, bgcolor: '#f44336', color: '#fff' }}
-                      >
-                        <Close fontSize="small" />
-                      </IconButton>
-                    </ImageListItem>
-                  ))}
-                </ImageList>
+                <>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    onClick={downloadAllPhotos}
+                    sx={{ color: COLORS.text, borderColor: COLORS.textSecondary, mb: 1, mr: 1 }}
+                  >
+                    💾 Télécharger toutes les photos
+                  </Button>
+                  <ImageList cols={4} rowHeight={80}>
+                    {photos.map((photo, i) => (
+                      <ImageListItem key={i} sx={{ position: 'relative' }}>
+                        <img src={photo.preview} style={{ height: '100%', objectFit: 'cover', borderRadius: 4 }} />
+                        <IconButton
+                          size="small"
+                          onClick={() => removePhoto(i)}
+                          sx={{ position: 'absolute', top: 2, right: 2, bgcolor: '#f44336', color: '#fff' }}
+                        >
+                          <Close fontSize="small" />
+                        </IconButton>
+                      </ImageListItem>
+                    ))}
+                  </ImageList>
+                </>
               )}
             </CardContent>
           </Card>
@@ -252,11 +297,19 @@ function PriseDeCote() {
                 {isRecording ? `Arrêter (${formatTime(recordingTime)})` : 'Enregistrer'}
               </Button>
               {audioBlob && (
-                <Typography variant="body2" sx={{ color: COLORS.success }}>
-                  ✅ Audio enregistré ({Math.round(audioBlob.size/1024)} KB)
-                  <br />
-                  <small>L'audio sera à télécharger manuellement</small>
-                </Typography>
+                <Box>
+                  <Typography variant="body2" sx={{ color: COLORS.success, mb: 1 }}>
+                    ✅ Audio enregistré ({Math.round(audioBlob.size/1024)} KB)
+                  </Typography>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    onClick={downloadAudio}
+                    sx={{ color: COLORS.success, borderColor: COLORS.success }}
+                  >
+                    💾 Télécharger l'audio
+                  </Button>
+                </Box>
               )}
             </CardContent>
           </Card>
