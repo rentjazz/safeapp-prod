@@ -46,7 +46,7 @@ function Calendar() {
 
   return (
     <div className="calendar-container">
-      <h3 style={{ fontSize: '11px', fontWeight: 600, color: 'var(--c-purple)', marginBottom: '16px' }}>Prochains rendez-vous (7 jours)</h3>
+      <h3 style={{ fontSize: '12px', fontWeight: 600, color: 'var(--c-purple)', marginBottom: '16px' }}>Prochains rendez-vous (7 jours)</h3>
       <div className="event-list">
         {events.length === 0 ? (
           <p className="empty">Aucun rendez-vous</p>
