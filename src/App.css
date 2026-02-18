@@ -202,14 +202,14 @@ body {
   align-items: center;
   gap: 8px;
   margin-bottom: 12px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--c-purple);
 }
 
 .dashboard-card .dashboard-item span,
 .dashboard-card .empty {
-  font-size: 13px;
+  font-size: 11px;
 }
 
 .dashboard-item {
@@ -301,14 +301,14 @@ body {
   display: block;
   font-weight: 500;
   color: var(--c-white);
-  font-size: 13px;
+  font-size: 11px;
 }
 
 .task-date {
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 13px;
+  font-size: 11px;
   color: rgba(255,255,255,0.65);
   margin-top: 4px;
 }
@@ -374,19 +374,19 @@ body {
   font-weight: 600;
   margin-bottom: 4px;
   color: var(--c-white);
-  font-size: 13px;
+  font-size: 11px;
 }
 
 .event-time {
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 13px;
+  font-size: 11px;
   color: rgba(255,255,255,0.75);
 }
 
 .event-location {
-  font-size: 13px;
+  font-size: 11px;
   color: rgba(255,255,255,0.75);
   margin-top: 4px;
 }
