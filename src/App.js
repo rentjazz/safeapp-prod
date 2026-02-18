@@ -8,9 +8,10 @@ import Tasks from './components/Tasks';
 import Calendar from './components/Calendar';
 import Stock from './components/Stock';
 import Overview from './components/Overview';
+import PriseDeCote from './components/PriseDeCote';
 
 // Icons
-import { LayoutDashboard, CheckSquare, Calendar as CalendarIcon, Package } from 'lucide-react';
+import { LayoutDashboard, CheckSquare, Calendar as CalendarIcon, Package, Camera } from 'lucide-react';
 
 function App() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -21,6 +22,7 @@ function App() {
     { id: 'tasks', label: 'Tâches', icon: CheckSquare },
     { id: 'calendar', label: 'Rendez-vous', icon: CalendarIcon },
     { id: 'stock', label: 'Stock', icon: Package },
+    { id: 'prise-de-cote', label: 'Prise de Côte', icon: Camera },
   ];
 
   const renderContent = () => {
@@ -29,6 +31,7 @@ function App() {
       case 'tasks': return <Tasks />;
       case 'calendar': return <Calendar />;
       case 'stock': return <Stock />;
+      case 'prise-de-cote': return <PriseDeCote />;
       default: return <Overview />;
     }
   };
